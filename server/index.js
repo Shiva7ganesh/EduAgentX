@@ -15,7 +15,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.post("/api/get-put-object-signed-url", async (req, res) => {
-  console.log(req.body);
   const { fileName, fileType } = req.body || {};
   if (!fileName || !fileType) {
     return res
@@ -45,7 +44,6 @@ app.get("/api/get-object-url/:key", async (req, res) => {
 });
 
 app.post("/api/initiate-task", async (req, res) => {
-  console.log(req.body);
   const { downloadlink } = req.body || {};
   if (!downloadlink) {
     return res
@@ -53,22 +51,24 @@ app.post("/api/initiate-task", async (req, res) => {
       .json({ status: "error", error: "Download link is required" });
   }
   const response = await fetch(
-    "https://cloud.uipath.com/eduautomaters/DefaultTenant/orchestrator_/t/0fb89d4f-c754-477e-b343-f706c3d68dce/test123",
+    process.env.UI_PATH_API,
     {
       method: "POST",
       headers: {
         Authorization:
-          "Bearer rt_85EA3527E76E326C19CA6EE719CB08FE42A9204D98A69CD133E91B7476E5D8B9-1",
+          `Bearer ${process.env.UI_AUTH_TOKEN}`,
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        "downloadlink": "https://saiteja.site/api/files/download/Rawrqxm9rSGDEsg",
+        downloadlink
       }),
     }
   );
-  console.log(response);
+  const result = await response.json();
   return res.json({
     status: "success",
     message: "Task initiated successfully",
+    data : result
   });
 });
 app.listen(3000, () => {

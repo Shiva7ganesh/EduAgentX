@@ -79,8 +79,7 @@ const Form = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          downloadlink:
-            "https://saiteja.site/api/files/download/Rawrqxm9rSGDEsg",
+          downloadlink
         }),
       }
     );
