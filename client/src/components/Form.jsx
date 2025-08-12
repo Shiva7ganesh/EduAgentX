@@ -7,8 +7,6 @@ const Form = () => {
   const [processId, setProcessId] = useState(null);
   const [processStatus, setProcessStatus] = useState(null);
   const pollingRef = useRef(null);
-  const [manualId, setManualId] = useState("");
-  const [manualState, setManualState] = useState("");
 
   const getUploadURL = async (fileName, fileType) => {
     if (!fileName || !fileType) {
@@ -124,25 +122,6 @@ const Form = () => {
     }
   };
 
-  const handleManualStatusPost = async (e) => {
-    e.preventDefault();
-    if (!manualId || !manualState) return;
-    try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/process-status`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: Number(manualId), state: manualState })
-      });
-      const json = await res.json();
-      if (json.status === "success") {
-        setProcessId(json.data.id || Number(manualId));
-        setProcessStatus(json.data);
-      }
-    } catch (err) {
-      console.error("Manual status post failed", err);
-    }
-  };
-
   return (
     <div>
       <form onSubmit={handleFileupload}>
@@ -158,27 +137,6 @@ const Form = () => {
 
         <button type="submit">upload</button>
       </form>
-
-      <div style={{ marginTop: 16 }}>
-        <div style={{ fontWeight: 600 }}>Manual status update (testing)</div>
-        <form onSubmit={handleManualStatusPost} style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 8 }}>
-          <input
-            type="number"
-            placeholder="id"
-            value={manualId}
-            onChange={(e) => setManualId(e.target.value)}
-            style={{ width: 120 }}
-          />
-          <input
-            type="text"
-            placeholder="state"
-            value={manualState}
-            onChange={(e) => setManualState(e.target.value)}
-            style={{ width: 220 }}
-          />
-          <button type="submit">Send</button>
-        </form>
-      </div>
 
       {processId && (
         <div style={{ marginTop: 12 }}>

@@ -50,7 +50,7 @@ app.get("/api/get-object-url/:key", async (req, res) => {
 // Endpoint to receive status updates for a process
 app.post("/api/process-status", async (req, res) => {
   const payload = req.body || {};
-  const id = payload.id ?? payload.processId ?? payload.process_id;
+  const id = payload.id ?? payload.processId ?? payload.process_id ?? payload.processid;
   if (id === undefined || id === null) {
     return res.status(400).json({ status: "error", error: "Process id is required" });
   }
