@@ -1,9 +1,13 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const Form = () => {
   const [file, setFile] = useState();
   const [uploadUrl, setUploadUrl] = useState();
+  const [processId, setProcessId] = useState(null);
+  const [processStatus, setProcessStatus] = useState(null);
+  const pollingRef = useRef(null);
+
   const getUploadURL = async (fileName, fileType) => {
     if (!fileName || !fileType) {
       console.error("fileName or fileType is undefined");
@@ -55,6 +59,34 @@ const Form = () => {
     }
     return "";
   };
+
+  const startPolling = (id) => {
+    if (pollingRef.current) clearInterval(pollingRef.current);
+    pollingRef.current = setInterval(async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/process-status/${id}`);
+        const json = await res.json();
+        if (json.status === "success") {
+          setProcessStatus(json.data);
+          // Stop polling when state indicates completion
+          const terminalStates = ["Succeeded", "Failed", "Stopped", "Faulted", "Canceled", "Completed"];
+          if (json.data?.state && terminalStates.includes(json.data.state)) {
+            clearInterval(pollingRef.current);
+            pollingRef.current = null;
+          }
+        }
+      } catch (e) {
+        console.error("Polling error", e);
+      }
+    }, 2000);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
+  }, []);
+
   const handleFileupload = async (e) => {
     e.preventDefault();
     if (!file || !uploadUrl) return;
@@ -83,7 +115,11 @@ const Form = () => {
         }),
       }
     );
-    console.log(response);
+    const json = await response.json();
+    if (json?.data?.id) {
+      setProcessId(json.data.id);
+      startPolling(json.data.id);
+    }
   };
 
   return (
@@ -101,6 +137,14 @@ const Form = () => {
 
         <button type="submit">upload</button>
       </form>
+
+      {processId && (
+        <div style={{ marginTop: 12 }}>
+          <div>Process ID: {processId}</div>
+          <div>State: {processStatus?.state ?? "Pending"}</div>
+          {processStatus?.updatedAt && <div>Last update: {new Date(processStatus.updatedAt).toLocaleTimeString()}</div>}
+        </div>
+      )}
     </div>
   );
 };

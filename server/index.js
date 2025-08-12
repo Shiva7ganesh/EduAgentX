@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { getObjectURL, putObject } from "./utils/aws.util.js";
+import "dotenv/config";
 const app = express();
 
 app.use(
@@ -13,6 +14,9 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// In-memory store for process statuses keyed by id
+const processStatusStore = new Map();
 
 app.post("/api/get-put-object-signed-url", async (req, res) => {
   const { fileName, fileType } = req.body || {};
@@ -43,6 +47,29 @@ app.get("/api/get-object-url/:key", async (req, res) => {
   }
 });
 
+// Endpoint to receive status updates for a process
+app.post("/api/process-status", async (req, res) => {
+  const payload = req.body || {};
+  const id = payload.id ?? payload.processId ?? payload.process_id;
+  if (id === undefined || id === null) {
+    return res.status(400).json({ status: "error", error: "Process id is required" });
+  }
+  const idKey = String(id);
+  const existing = processStatusStore.get(idKey) || {};
+  const updated = { ...existing, ...payload, updatedAt: new Date().toISOString() };
+  processStatusStore.set(idKey, updated);
+  return res.status(200).json({ status: "success" });
+});
+
+// Endpoint to fetch current status by id
+app.get("/api/process-status/:id", async (req, res) => {
+  const idKey = String(req.params.id);
+  if (!processStatusStore.has(idKey)) {
+    return res.status(404).json({ status: "error", error: "Status not found" });
+  }
+  return res.json({ status: "success", data: processStatusStore.get(idKey) });
+});
+
 app.post("/api/initiate-task", async (req, res) => {
   const { downloadlink } = req.body || {};
   if (!downloadlink) {
@@ -65,10 +92,20 @@ app.post("/api/initiate-task", async (req, res) => {
     }
   );
   const result = await response.json();
+
+  // Store initial status keyed by id if present
+  if (result && (result.id !== undefined && result.id !== null)) {
+    const idKey = String(result.id);
+    processStatusStore.set(idKey, {
+      ...result,
+      updatedAt: new Date().toISOString(),
+    });
+  }
+
   return res.json({
     status: "success",
     message: "Task initiated successfully",
-    data : result
+    data: result
   });
 });
 app.listen(3000, () => {
