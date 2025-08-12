@@ -58,7 +58,7 @@ app.post("/api/process-status", async (req, res) => {
   const existing = processStatusStore.get(idKey) || {};
   const updated = { ...existing, ...payload, updatedAt: new Date().toISOString() };
   processStatusStore.set(idKey, updated);
-  return res.status(200).json({ status: "success" });
+  return res.status(200).json({ status: "success", data: updated });
 });
 
 // Endpoint to fetch current status by id
