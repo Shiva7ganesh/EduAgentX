@@ -108,7 +108,7 @@ function App() {
       const result = await response.json();
       setProgress(result.data.progress);
       setProcessStatus(result);
-      if (result.data.progress === '100') {
+      if (result.data.progress === 100) {
         clearInterval(interval);
         setIsProcessing(false);
         // setShowResults(true);
