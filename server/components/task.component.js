@@ -77,10 +77,8 @@ export const getProcessStatus = async (req, res) => {
     return res.status(400).json({ status: "error", error: "Process id is required" });
   }
   const idKey = String(id);
-  const existing = processStatusStore.get(idKey) || {};
-  const updated = { ...existing, ...payload, updatedAt: new Date().toISOString() };
-  processStatusStore.set(idKey, updated);
-  return res.status(200).json({ status: "success", data: updated });
+  processStatusStore.set(idKey, payload.data);
+  return res.status(200).json({ status: "success", data: processStatusStore.get(idKey) });
 }
 
 export const getProcessStatusById = async (req, res) => {

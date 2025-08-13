@@ -145,14 +145,11 @@ function App() {
         <header className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
             <span className="bg-gradient-to-r from-[#007ACC] to-blue-600 bg-clip-text text-transparent">
-              UiPath
-            </span>{" "}
-            Leave Processor
+              EduAgentX
+            </span>
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Automated leave request processing powered by intelligent
-            automation. Upload your Excel file and let our robot assistant
-            handle the rest.
+            
           </p>
         </header>
 
