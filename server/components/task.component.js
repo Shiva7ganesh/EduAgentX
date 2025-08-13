@@ -30,7 +30,8 @@ export const initiateTask = async (req, res) => {
     const idKey = String(result.key);
     processStatusStore.set(idKey, {
       ...result,
-      updatedAt: new Date().toISOString(),
+      state: "initiated",
+      progress: 0,
     });
   }
 
