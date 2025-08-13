@@ -10,12 +10,11 @@ function App() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [showResults, setShowResults] = useState(false);
-  const [processId, setProcessId] = useState('33dsfds');
+  const [processId, setProcessId] = useState("33dsfds");
   const [processStatus, setProcessStatus] = useState(null);
   const [downloadlink, setDownloadlink] = useState("");
-  
-  const handleGETFileURL = async (fileName) => {
 
+  const handleGETFileURL = async (fileName) => {
     const objectURLResponse = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/get-object-url/${fileName}`
     );
@@ -43,6 +42,7 @@ function App() {
     if (json?.data?.key) {
       setProcessId(json.data.key);
     }
+    return json?.data?.key || "";
   };
 
   const handleFileupload = async (file, uploadUrl) => {
@@ -54,7 +54,7 @@ function App() {
       },
     });
     const downloadLink = await handleGETFileURL(file.name);
-    console.log(downloadLink)
+    console.log(downloadLink);
     setDownloadlink(downloadLink);
     if (downloadLink === "") {
       console.log("someting went wrong at s3");
@@ -81,7 +81,7 @@ function App() {
       }
     );
     const result = await response.json();
-    return result.uploadUrl
+    return result.uploadUrl;
   };
 
   const handleFileSelect = async (selectedFile) => {
@@ -92,26 +92,37 @@ function App() {
     await handleFileupload(selectedFile, uploadURL);
   };
 
-
   const handleProcess = async () => {
     if (!file) return;
     setIsProcessing(true);
     setProgress(0);
-    startProcess()
+    const processId = await startProcess();
+    let limit = 3;
     const interval = setInterval(async () => {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/process-status/${processId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/process-status/${processId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      });
+      );
       const result = await response.json();
-      setProgress(result.data.progress);
-      setProcessStatus(result);
-      if (result.data.progress === 100) {
-        clearInterval(interval);
-        setIsProcessing(false);
-        // setShowResults(true);
+      if (result?.status === "error") {
+        limit--;
+        if (limit === 0) {
+          clearInterval(interval)
+          alert('process is not started yet')
+        }
+      } else {
+        setProgress(result?.data?.progress);
+        setProcessStatus(result);
+        if (result?.data?.progress === 100) {
+          clearInterval(interval);
+          setIsProcessing(false);
+          // setShowResults(true);
+        }
       }
     }, 1000);
   };
@@ -152,9 +163,7 @@ function App() {
               EduAgentX
             </span>
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            
-          </p>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto"></p>
         </header>
 
         <div className="grid lg:grid-cols-3 gap-8 items-start max-w-7xl mx-auto">
@@ -186,7 +195,7 @@ function App() {
             <ProgressBar
               progress={progress}
               isVisible={isProcessing || progress > 0}
-              info={processStatus?.data?.state || 'Task in the queue'}
+              info={processStatus?.data?.state || "Task in the queue"}
             />
 
             {/* Results Table */}
