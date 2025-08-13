@@ -1,7 +1,6 @@
 import { getObjectURL, putObject } from "../utils/aws.util.js";
 import { config } from "dotenv";
 
-
 config();
 
 const processStatusStore = new Map();
@@ -53,7 +52,7 @@ export const getSignedURL = async (req, res) => {
   const uploadUrl = await putObject(fileName, fileType);
 
   res.json({ status: "success", uploadUrl }).status(201);
-}
+};
 
 export const getExcelURL = async (req, res) => {
   const { key } = req.params;
@@ -69,18 +68,31 @@ export const getExcelURL = async (req, res) => {
       .status(500)
       .json({ status: "error", error: "Failed to get object URL" });
   }
-}
+};
 
 export const getProcessStatus = async (req, res) => {
   const payload = req.body || {};
-  const id = payload.id ?? payload.processId ?? payload.process_id ?? payload.processid;
+  const id =
+    payload.id ?? payload.processId ?? payload.process_id ?? payload.processid;
   if (id === undefined || id === null) {
-    return res.status(400).json({ status: "error", error: "Process id is required" });
+    return res
+      .status(400)
+      .json({ status: "error", error: "Process id is required" });
   }
   const idKey = String(id);
-  processStatusStore.set(idKey, payload.data);
-  return res.status(200).json({ status: "success", data: processStatusStore.get(idKey) });
-}
+  const existingData = processStatusStore.get(idKey);
+  if (existingData) {
+    processStatusStore.set(idKey, {
+      ...existingData,
+      ...payload.data,
+    });
+  } else {
+    processStatusStore.set(idKey, payload.data);
+  }
+  return res
+    .status(200)
+    .json({ status: "success", data: processStatusStore.get(idKey) });
+};
 
 export const getProcessStatusById = async (req, res) => {
   const idKey = String(req.params.id);
@@ -88,4 +100,4 @@ export const getProcessStatusById = async (req, res) => {
     return res.status(404).json({ status: "error", error: "Status not found" });
   }
   return res.json({ status: "success", data: processStatusStore.get(idKey) });
-}
+};
