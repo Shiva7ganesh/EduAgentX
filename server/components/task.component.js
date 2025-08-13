@@ -26,8 +26,8 @@ export const initiateTask = async (req, res) => {
   const result = await response.json();
 
   // Store initial status keyed by id if present
-  if (result && result.id !== undefined && result.id !== null) {
-    const idKey = String(result.id);
+  if (result && result.key !== undefined && result.key !== null) {
+    const idKey = String(result.key);
     processStatusStore.set(idKey, {
       ...result,
       updatedAt: new Date().toISOString(),
