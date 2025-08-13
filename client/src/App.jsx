@@ -10,7 +10,7 @@ function App() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [showResults, setShowResults] = useState(false);
-  const [processId, setProcessId] = useState(null);
+  const [processId, setProcessId] = useState('33dsfds');
   const [processStatus, setProcessStatus] = useState(null);
   const [downloadlink, setDownloadlink] = useState("");
   
@@ -40,8 +40,8 @@ function App() {
       }
     );
     const json = await response.json();
-    if (json?.data?.id) {
-      setProcessId(json.data.id);
+    if (json?.data?.key) {
+      setProcessId(json.data.key);
     }
   };
 
@@ -92,24 +92,28 @@ function App() {
     await handleFileupload(selectedFile, uploadURL);
   };
 
+
   const handleProcess = async () => {
     if (!file) return;
     setIsProcessing(true);
     setProgress(0);
     startProcess()
-
-    // Simulate processing with realistic progress updates
-    const progressSteps = [10, 25, 45, 60, 75, 85, 95, 100];
-    const delays = [500, 800, 1000, 700, 900, 600, 400, 300];
-
-    for (let i = 0; i < progressSteps.length; i++) {
-      await new Promise((resolve) => setTimeout(resolve, delays[i]));
-      setProgress(progressSteps[i]);
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setIsProcessing(false);
-    // setShowResults(true);
+    const interval = setInterval(async () => {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/process-status/${processId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      const result = await response.json();
+      setProgress(result.data.progress);
+      setProcessStatus(result);
+      if (result.data.progress === '100') {
+        clearInterval(interval);
+        setIsProcessing(false);
+        // setShowResults(true);
+      }
+    }, 1000);
   };
 
   return (
@@ -182,6 +186,7 @@ function App() {
             <ProgressBar
               progress={progress}
               isVisible={isProcessing || progress > 0}
+              info={processStatus?.data?.state || 'Task in the queue'}
             />
 
             {/* Results Table */}

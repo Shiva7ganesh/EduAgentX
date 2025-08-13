@@ -2,7 +2,7 @@ import React from 'react';
 
 
 
-export default function ProgressBar({ progress, isVisible }) {
+export default function ProgressBar({ progress, isVisible , info}) {
   if (!isVisible) return null;
 
   return (
@@ -23,10 +23,7 @@ export default function ProgressBar({ progress, isVisible }) {
       </div>
       
       <div className="mt-2 text-xs text-gray-500 text-center">
-        {progress < 30 && "Analyzing file structure..."}
-        {progress >= 30 && progress < 60 && "Processing employee data..."}
-        {progress >= 60 && progress < 90 && "Calculating leave status..."}
-        {progress >= 90 && "Finalizing results..."}
+        {info}
       </div>
     </div>
   );
