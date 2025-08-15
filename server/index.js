@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import path from 'path';
 import "dotenv/config";
-import { getExcelURL, getProcessStatus, getProcessStatusById, getSignedURL, initiateTask } from "./components/task.component.js";
+import { getDashboardData, getExcelURL, getProcessStatus, getProcessStatusById, getSignedURL, initiateTask } from "./components/task.component.js";
 const app = express();
 app.use(
   cors({
@@ -30,7 +30,7 @@ app.get("/api/process-status/:id", getProcessStatusById);
 
 app.post("/api/initiate-task", initiateTask);
 
-
+app.get('/api/dashboard-data', getDashboardData);
 
 
 const __dirname = path.resolve();
