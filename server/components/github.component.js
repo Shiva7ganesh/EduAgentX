@@ -1,4 +1,4 @@
-import { exec } from "child_process";
+import { spawn } from "child_process";
 import crypto from "crypto";
 import { config } from "dotenv";
 
@@ -14,18 +14,18 @@ function verifySignature(req) {
 
 export const githubWebHook = (req, res) => {
   if (!verifySignature(req)) {
-    console.error("Invalid signature");
     return res.status(401).send("Invalid signature");
   }
 
   console.log("Push event received. Running update.sh...");
 
-  exec("bash ../update.sh", (err, stdout, stderr) => {
-    if (err) {
-      console.error(stderr);
-      return res.status(500).send("Update failed");
-    }
-    console.log(stdout);
-    res.status(200).send("Update completed");
+  // Respond immediately so GitHub gets 200 OK
+  res.status(200).send("Update started");
+
+  // Run script without blocking the webhook response
+  const child = spawn("sh", ["./update.sh"], {
+    detached: true,
+    stdio: "ignore"
   });
+  child.unref();
 };
