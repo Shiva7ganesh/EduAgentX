@@ -33,6 +33,9 @@ app.post("/api/initiate-task", initiateTask);
 
 app.get('/api/dashboard-data', getDashboardData);
 
+app.get('/api/testing', (req, res) => {
+  res.json({ message: "Testing endpoint is working!" });
+});
 
 const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, "./frontend")));
