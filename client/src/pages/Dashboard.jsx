@@ -70,6 +70,7 @@ export default function EmailDashboard() {
 
   useEffect(() => {
     const interval = setInterval(() =>  fetchDashboardDetails(), 5000);
+    fetchDashboardDetails();
     return () => {
       clearInterval(interval)
     }
