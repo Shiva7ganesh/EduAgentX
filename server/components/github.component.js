@@ -19,7 +19,7 @@ export const githubWebHook = (req, res) => {
 
   console.log("Push event received. Running update.sh...");
 
-  res.status(200).send("Update started");
+  res.status(200).send("Update started ");
 
   const child = spawn("sh", ["./update.sh"]);
   child.stdout.on("data", (data) => {
