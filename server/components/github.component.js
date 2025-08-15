@@ -1,6 +1,8 @@
 import { exec } from "child_process";
 import crypto from "crypto";
+import { config } from "dotenv";
 
+config();
 function verifySignature(req) {
     const SECRET = process.env.GITHUB_WEBHOOK_PASS;
     const signature = req.headers["x-hub-signature-256"];
@@ -17,7 +19,7 @@ export const githubWebHook = (req, res) => {
 
   console.log("Push event received. Running update.sh...");
 
-  exec("bash ../../update.sh", (err, stdout, stderr) => {
+  exec("bash ../update.sh", (err, stdout, stderr) => {
     if (err) {
       console.error(stderr);
       return res.status(500).send("Update failed");
