@@ -16,7 +16,6 @@ export const githubWebHook = (req, res) => {
   if (!verifySignature(req)) {
     return res.status(401).send("Invalid signature");
   }
-
   console.log("Push event received. Running update.sh...");
 
   res.status(200).send("Update started ");
