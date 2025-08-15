@@ -14,6 +14,7 @@ function verifySignature(req) {
 
 export const githubWebHook = (req, res) => {
   if (!verifySignature(req)) {
+    console.error("Invalid signature");
     return res.status(401).send("Invalid signature");
   }
 
