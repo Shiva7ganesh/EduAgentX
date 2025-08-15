@@ -21,7 +21,7 @@ export const githubWebHook = (req, res) => {
 
   res.status(200).send("Update started ");
 
-  const child = spawn("sh", ["./update.sh"]);
+  const child = spawn("sh", ["../update.sh"]);
   child.stdout.on("data", (data) => {
     console.log(`[update.sh stdout]: ${data}`);
   });
