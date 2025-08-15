@@ -17,7 +17,7 @@ export const githubWebHook = (req, res) => {
     return res.status(401).send("Invalid signature");
   }
 
-  console.log("Push event received. Running update.sh...");
+   console.log("Push event received. Running update.sh...");
 
   exec("bash ../update.sh", (err, stdout, stderr) => {
     if (err) {
