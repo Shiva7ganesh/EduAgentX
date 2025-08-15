@@ -3,6 +3,7 @@ import cors from "cors";
 import path from 'path';
 import "dotenv/config";
 import { getDashboardData, getExcelURL, getProcessStatus, getProcessStatusById, getSignedURL, initiateTask } from "./components/task.component.js";
+import { githubWebHook } from "./components/github.component.js";
 const app = express();
 app.use(
   cors({
@@ -38,7 +39,7 @@ app.use(express.static(path.join(__dirname, "./frontend")));
 app.get("*url", (req, res) => {
   res.sendFile(path.join(__dirname, "./frontend/index.html"));
 });
-
+app.post("/api/github-webhook", githubWebHook);
 
 app.listen(3000, () => {
   console.log("Server is running on http://localhost:3000");
