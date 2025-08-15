@@ -19,10 +19,10 @@ export const githubWebHook = (req, res) => {
 
   console.log("Push event received. Running update.sh...");
 
-  // Respond immediately so GitHub gets 200 OK
+
   res.status(200).send("Update started");
 
-  // Run script without blocking the webhook response
+
   const child = spawn("sh", ["./update.sh"], {
     detached: true,
     stdio: "ignore"
