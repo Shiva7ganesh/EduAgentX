@@ -2,12 +2,14 @@ import React from 'react'
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Homepage from './pages/SendEmails';
 import Dashboard from './pages/Dashboard'
+import AbsentPage from './pages/AbsentPage';
 const App = () => {
   return (
     <>
       <Routes>
         <Route path='/' element={<Homepage />} />
         <Route path='/dashboard' element={<Dashboard />} />
+        <Route path='/mark-absentees' element={<AbsentPage />} />
         <Route path='*' element={<h1>Not Found Ra babu</h1>} />
       </Routes>
     </>

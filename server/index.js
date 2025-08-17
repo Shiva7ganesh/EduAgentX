@@ -4,6 +4,7 @@ import path from 'path';
 import "dotenv/config";
 import { getDashboardData, getExcelURL, getProcessStatus, getProcessStatusById, getSignedURL, initiateTask } from "./components/task.component.js";
 import { githubWebHook } from "./components/github.component.js";
+import { getStudentDetails, sendStudentDetails } from "./components/student.component.js";
 const app = express();
 app.use(
   cors({
@@ -32,6 +33,10 @@ app.get("/api/process-status/:id", getProcessStatusById);
 app.post("/api/initiate-task", initiateTask);
 
 app.get('/api/dashboard-data', getDashboardData);
+
+app.get('/api/student-details', getStudentDetails);
+
+app.post('/api/submit-attendance', sendStudentDetails);
 
 app.get('/api/testing', (req, res) => {
   res.json({ message: "Testing endpoint is working!" });
