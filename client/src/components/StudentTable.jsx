@@ -99,17 +99,51 @@ const StudentTable = () => {
 
       {/* Date Picker */}
       <div className="w-full max-w-5xl mb-6">
-        <div className="bg-white shadow-md rounded-lg p-4 flex items-center justify-center gap-4">
-          <label htmlFor="attendance-date" className="text-lg font-semibold text-gray-700">
-            Select Date:
-          </label>
-          <input
-            type="date"
-            id="attendance-date"
-            value={selectedDate}
-            onChange={(e) => handleDateChange(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-700"
-          />
+        <div className="bg-white shadow-lg rounded-2xl p-6 border border-gray-200">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-50 rounded-lg">
+                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" 
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <label htmlFor="attendance-date" className="text-xl font-bold text-gray-800">
+                Select Attendance Date
+              </label>
+            </div>
+            
+            <div className="relative">
+              <input
+                type="date"
+                id="attendance-date"
+                value={selectedDate}
+                max={new Date().toISOString().split("T")[0]}
+                onChange={(e) => handleDateChange(e.target.value)}
+                className="px-6 py-3 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-gray-700 text-lg font-medium bg-gray-50 hover:bg-white transition-all duration-200 cursor-pointer shadow-sm"
+              />
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+            
+            
+          </div>
+          
+          <div className="mt-4 flex justify-center">
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-6 py-3 rounded-xl border border-blue-100">
+              <p className="text-sm font-semibold text-gray-700">
+                Selected Date: <span className="text-blue-600">{new Date(selectedDate).toLocaleDateString('en-US', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}</span>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
