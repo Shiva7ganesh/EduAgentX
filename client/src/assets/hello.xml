@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Response>
-  <Say voice="alice">Hello Anvesh, this is a test call from Twilio</Say>
-</Response>
