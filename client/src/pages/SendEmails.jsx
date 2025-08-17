@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { GraduationCap, Upload, FileText, CheckCircle } from "lucide-react";
 import RobotAssistant from "../components/RobotAssistant";
 import FileUpload from "../components/FileUpload";
 import ProcessButton from "../components/ProcessButton";
@@ -6,13 +7,16 @@ import ProgressBar from "../components/ProgressBar";
 import ResultsTable from "../components/ResultsTable";
 
 function Homepage() {
-  const [file, setFile] = useState(null);
+
+  const [collegeLogoFile, setCollegeLogoFile] = useState(null);
+  const [studentExcelFile, setStudentExcelFile] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [showResults, setShowResults] = useState(false);
   const [processId, setProcessId] = useState("33dsfds");
   const [processStatus, setProcessStatus] = useState(null);
-  const [downloadlink, setDownloadlink] = useState("");
+  const [collegeLogoDownloadLink, setCollegeLogoDownloadLink] = useState("");
+  const [studentExcelDownloadLink, setStudentExcelDownloadLink] = useState("");
+  const [collegeName, setCollegeName] = useState("");
 
   const handleGETFileURL = async (fileName) => {
     const objectURLResponse = await fetch(
@@ -34,7 +38,9 @@ function Homepage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          downloadlink,
+          collegeLogoDownloadLink,
+          studentExcelDownloadLink,
+          collegeName,
         }),
       }
     );
@@ -45,22 +51,7 @@ function Homepage() {
     return json?.data?.key || "";
   };
 
-  const handleFileupload = async (file, uploadUrl) => {
-    await fetch(uploadUrl, {
-      method: "PUT",
-      body: file,
-      headers: {
-        "Content-Type": file.type,
-      },
-    });
-    const downloadLink = await handleGETFileURL(file.name);
-    console.log(downloadLink);
-    setDownloadlink(downloadLink);
-    if (downloadLink === "") {
-      console.log("someting went wrong at s3");
-      return;
-    }
-  };
+
 
   const getUploadURL = async (fileName, fileType) => {
     if (!fileName || !fileType) {
@@ -84,16 +75,37 @@ function Homepage() {
     return result.uploadUrl;
   };
 
-  const handleFileSelect = async (selectedFile) => {
-    setFile(selectedFile);
-    setShowResults(false);
-    setProgress(0);
+
+  const handleCollegeLogoSelect = async (selectedFile) => {
+    setCollegeLogoFile(selectedFile);
     const uploadURL = await getUploadURL(selectedFile.name, selectedFile.type);
-    await handleFileupload(selectedFile, uploadURL);
+    await fetch(uploadURL, {
+      method: "PUT",
+      body: selectedFile,
+      headers: {
+        "Content-Type": selectedFile.type,
+      },
+    });
+    const downloadLink = await handleGETFileURL(selectedFile.name);
+    setCollegeLogoDownloadLink(downloadLink);
+  };
+
+  const handleStudentExcelSelect = async (selectedFile) => {
+    setStudentExcelFile(selectedFile);
+    const uploadURL = await getUploadURL(selectedFile.name, selectedFile.type);
+    await fetch(uploadURL, {
+      method: "PUT",
+      body: selectedFile,
+      headers: {
+        "Content-Type": selectedFile.type,
+      },
+    });
+    const downloadLink = await handleGETFileURL(selectedFile.name);
+    setStudentExcelDownloadLink(downloadLink);
   };
 
   const handleProcess = async () => {
-    if (!file) return;
+    if (!collegeName.trim() || !collegeLogoFile || !studentExcelFile) return;
     setIsProcessing(true);
     setProgress(0);
     const processId = await startProcess();
@@ -121,7 +133,6 @@ function Homepage() {
         if (result?.data?.progress === 100) {
           clearInterval(interval);
           setIsProcessing(false);
-          // setShowResults(true);
         }
       }
     }, 1000);
@@ -158,34 +169,154 @@ function Homepage() {
       <div className="relative z-10 container mx-auto px-4 py-8">
         {/* Header */}
         <header className="text-center mb-12">
+          <div className="flex items-center justify-center mb-6">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-[#007ACC] to-blue-600 rounded-full blur-lg opacity-30 animate-pulse"></div>
+              <div className="relative bg-white/20 backdrop-blur-sm p-4 rounded-full border border-white/30 shadow-xl">
+                <GraduationCap className="w-12 h-12 text-[#007ACC]" />
+              </div>
+            </div>
+          </div>
+          
           <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
             <span className="bg-gradient-to-r from-[#007ACC] to-blue-600 bg-clip-text text-transparent">
               EduAgentX
             </span>
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto"></p>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Intelligent automation platform for educational institutions
+          </p>
         </header>
 
         <div className="grid lg:grid-cols-3 gap-8 items-start max-w-7xl mx-auto">
           {/* Robot Assistant */}
           <div className="lg:col-span-1 flex justify-center">
-            <RobotAssistant isProcessing={isProcessing} hasFile={!!file} />
+            <RobotAssistant 
+              isProcessing={isProcessing} 
+              hasLogo={!!collegeLogoFile}
+              hasExcel={!!studentExcelFile}
+            />
           </div>
 
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Upload Form */}
             <div className="bg-white/20 backdrop-blur-lg rounded-3xl p-8 border border-white/30 shadow-2xl">
-              <FileUpload
-                onFileSelect={handleFileSelect}
-                hasFile={!!file}
-                fileName={file?.name || ""}
-              />
+              {/* College Name Field */}
+              <div className="mb-8">
+                <label htmlFor="collegeName" className="block text-sm font-semibold text-gray-700 mb-3">
+                  Institution Name
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    id="collegeName"
+                    value={collegeName}
+                    onChange={(e) => setCollegeName(e.target.value)}
+                    placeholder="Enter your college or institution name"
+                    className="w-full px-4 py-3 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/40 focus:outline-none focus:ring-2 focus:ring-[#007ACC]/50 focus:border-[#007ACC] transition-all duration-300 placeholder-gray-500 text-gray-800"
+                    required
+                  />
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#007ACC]/5 to-blue-600/5 pointer-events-none"></div>
+                </div>
+              </div>
+
+              
+
+              {/* College Logo Upload */}
+              <div className="mt-8">
+                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                  College Logo
+                </label>
+                <div
+                  onClick={() => document.getElementById('college-logo-input')?.click()}
+                  className="relative w-full p-6 border-2 border-dashed border-white/40 rounded-2xl bg-white/20 backdrop-blur-sm cursor-pointer transition-all duration-300 hover:border-[#007ACC]/50 hover:bg-white/30 group"
+                >
+                  <input
+                    id="college-logo-input"
+                    type="file"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleCollegeLogoSelect(file);
+                    }}
+                    className="hidden"
+                    accept="image/*"
+                  />
+                  
+                  <div className="text-center">
+                    {collegeLogoFile ? (
+                      <div className="space-y-3">
+                        <CheckCircle className="w-8 h-8 text-green-500 mx-auto" />
+                        <div>
+                          <p className="text-sm font-semibold text-gray-800">Logo Uploaded</p>
+                          <p className="text-xs text-gray-600 flex items-center justify-center mt-1">
+                            <FileText className="w-3 h-3 mr-1" />
+                            {collegeLogoFile.name}
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <Upload className="w-8 h-8 text-[#007ACC] mx-auto group-hover:scale-110 transition-transform duration-300" />
+                        <div>
+                          <p className="text-sm font-semibold text-gray-800">Upload College Logo</p>
+                          <p className="text-xs text-gray-600">PNG, JPG, SVG formats supported</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Student Excel File Upload */}
+              <div className="mt-8">
+                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                  Student Data (Excel File)
+                </label>
+                <div
+                  onClick={() => document.getElementById('student-excel-input')?.click()}
+                  className="relative w-full p-6 border-2 border-dashed border-white/40 rounded-2xl bg-white/20 backdrop-blur-sm cursor-pointer transition-all duration-300 hover:border-[#007ACC]/50 hover:bg-white/30 group"
+                >
+                  <input
+                    id="student-excel-input"
+                    type="file"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleStudentExcelSelect(file);
+                    }}
+                    className="hidden"
+                    accept=".xlsx,.xls,.csv"
+                  />
+                  
+                  <div className="text-center">
+                    {studentExcelFile ? (
+                      <div className="space-y-3">
+                        <CheckCircle className="w-8 h-8 text-green-500 mx-auto" />
+                        <div>
+                          <p className="text-sm font-semibold text-gray-800">Excel File Uploaded</p>
+                          <p className="text-xs text-gray-600 flex items-center justify-center mt-1">
+                            <FileText className="w-3 h-3 mr-1" />
+                            {studentExcelFile.name}
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <Upload className="w-8 h-8 text-[#007ACC] mx-auto group-hover:scale-110 transition-transform duration-300" />
+                        <div>
+                          <p className="text-sm font-semibold text-gray-800">Upload Student Data</p>
+                          <p className="text-xs text-gray-600">Excel (.xlsx, .xls) or CSV files</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
 
               <div className="mt-8 flex justify-center">
                 <ProcessButton
                   onClick={handleProcess}
-                  disabled={!file}
+                  disabled={!collegeName.trim() || !collegeLogoFile || !studentExcelFile}
                   isProcessing={isProcessing}
                 />
               </div>
@@ -198,8 +329,7 @@ function Homepage() {
               info={processStatus?.data?.state || "Task in the queue"}
             />
 
-            {/* Results Table */}
-            <ResultsTable isVisible={showResults} />
+           
           </div>
         </div>
 

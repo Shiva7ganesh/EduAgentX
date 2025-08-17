@@ -1,84 +1,69 @@
 import React from 'react';
+import { Bot, FileCheck, Loader2, Image, FileSpreadsheet } from 'lucide-react';
 
 
-
-export default function RobotAssistant({ isProcessing, hasFile }) {
+function RobotAssistant({ isProcessing, hasLogo, hasExcel }) {
+  const allFilesUploaded = hasLogo && hasExcel;
+  
   return (
-    <div className="relative flex flex-col items-center">
-      {/* Robot Body */}
-      <div className="relative">
-        {/* Main Body */}
-        <div className="w-32 h-40 bg-gradient-to-b from-gray-100 to-gray-200 rounded-2xl border-2 border-gray-300 shadow-xl relative overflow-hidden">
-          {/* Circuit Pattern Overlay */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-4 left-4 w-4 h-4 border border-[#007ACC] rounded-full"></div>
-            <div className="absolute top-8 right-6 w-2 h-2 bg-[#007ACC] rounded-full"></div>
-            <div className="absolute bottom-8 left-6 w-3 h-3 border border-[#007ACC]"></div>
-          </div>
-          
-          {/* Head */}
-          <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 w-24 h-24 bg-gradient-to-b from-white to-gray-100 rounded-full border-2 border-gray-300 shadow-lg">
-            {/* Eyes */}
-            <div className="flex justify-center items-center space-x-3 mt-6">
-              <div className={`w-4 h-4 rounded-full transition-colors duration-500 ${
-                isProcessing ? 'bg-yellow-400 animate-pulse' : hasFile ? 'bg-green-400' : 'bg-[#007ACC]'
-              } shadow-lg`}>
-                <div className={`w-2 h-2 bg-white rounded-full ml-1 mt-1 transition-transform ${
-                  isProcessing ? 'animate-bounce' : ''
-                }`}></div>
-              </div>
-              <div className={`w-4 h-4 rounded-full transition-colors duration-500 ${
-                isProcessing ? 'bg-yellow-400 animate-pulse' : hasFile ? 'bg-green-400' : 'bg-[#007ACC]'
-              } shadow-lg`}>
-                <div className={`w-2 h-2 bg-white rounded-full ml-1 mt-1 transition-transform ${
-                  isProcessing ? 'animate-bounce' : ''
-                }`}></div>
-              </div>
+    <div className="relative">
+      {/* Glow effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#007ACC] to-blue-600 rounded-full blur-xl opacity-20 animate-pulse"></div>
+      
+      {/* Main robot container */}
+      <div className="relative bg-white/30 backdrop-blur-lg rounded-3xl p-8 border border-white/40 shadow-2xl transform transition-all duration-500 hover:scale-105">
+        <div className="text-center">
+          {/* Robot Icon */}
+          <div className="relative mb-6">
+            <div className="w-24 h-24 mx-auto bg-gradient-to-br from-[#007ACC] to-blue-600 rounded-full flex items-center justify-center shadow-xl">
+              {isProcessing ? (
+                <Loader2 className="w-12 h-12 text-white animate-spin" />
+              ) : allFilesUploaded ? (
+                <FileCheck className="w-12 h-12 text-white" />
+              ) : (
+                <Bot className="w-12 h-12 text-white" />
+              )}
             </div>
             
-            {/* Mouth */}
-            <div className={`mx-auto mt-3 w-6 h-3 border-2 rounded-full transition-all duration-500 ${
-              isProcessing ? 'border-yellow-400 animate-pulse' : hasFile ? 'border-green-400' : 'border-[#007ACC]'
-            }`}></div>
-          </div>
-          
-          {/* Chest Panel */}
-          <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-16 h-12 bg-gradient-to-b from-gray-50 to-gray-100 rounded-lg border border-gray-300">
-            <div className="flex flex-col items-center justify-center h-full space-y-1">
-              <div className={`w-8 h-1 rounded-full transition-colors duration-300 ${
-                isProcessing ? 'bg-yellow-400 animate-pulse' : hasFile ? 'bg-green-400' : 'bg-[#007ACC]'
-              }`}></div>
-              <div className={`w-6 h-1 rounded-full transition-colors duration-300 ${
-                isProcessing ? 'bg-yellow-400 animate-pulse' : hasFile ? 'bg-green-400' : 'bg-[#007ACC]'
-              }`}></div>
-              <div className={`w-4 h-1 rounded-full transition-colors duration-300 ${
-                isProcessing ? 'bg-yellow-400 animate-pulse' : hasFile ? 'bg-green-400' : 'bg-[#007ACC]'
+            {/* Status indicator */}
+            <div className="absolute -bottom-2 -right-2">
+              <div className={`w-6 h-6 rounded-full border-2 border-white shadow-lg ${
+                isProcessing ? 'bg-yellow-400 animate-pulse' : 
+                allFilesUploaded ? 'bg-green-400' : 'bg-gray-400'
               }`}></div>
             </div>
           </div>
+          
+          {/* Status text */}
+          <h3 className="text-xl font-bold text-gray-800 mb-2">
+            {isProcessing ? 'Processing...' : allFilesUploaded ? 'Ready to Process' : 'Waiting for Files'}
+          </h3>
+          
+          <p className="text-gray-600 text-sm mb-4">
+            {isProcessing 
+              ? 'Your file is being processed by our AI assistant' 
+              : allFilesUploaded 
+                ? 'All files uploaded successfully. Ready to begin processing.'
+                : 'Upload all required files and enter your institution name to get started'
+            }
+          </p>
+          
+          {/* File status indicators */}
+          <div className="space-y-2 text-xs">
+            
+            <div className={`flex items-center space-x-2 ${hasLogo ? 'text-green-600' : 'text-gray-400'}`}>
+              <Image className="w-3 h-3" />
+              <span>College Logo</span>
+            </div>
+            <div className={`flex items-center space-x-2 ${hasExcel ? 'text-green-600' : 'text-gray-400'}`}>
+              <FileSpreadsheet className="w-3 h-3" />
+              <span>Student Data</span>
+            </div>
+          </div>
         </div>
-        
-        {/* Arms */}
-        <div className="absolute top-12 -left-8 w-6 h-16 bg-gradient-to-b from-gray-100 to-gray-200 rounded-full border border-gray-300 shadow-md"></div>
-        <div className="absolute top-12 -right-8 w-6 h-16 bg-gradient-to-b from-gray-100 to-gray-200 rounded-full border border-gray-300 shadow-md"></div>
-        
-        {/* Clipboard in Right Hand */}
-        <div className="absolute top-20 -right-12 w-8 h-10 bg-white rounded-sm border border-gray-400 shadow-md transform rotate-12">
-          <div className="w-6 h-1 bg-gray-300 rounded-full mx-auto mt-2"></div>
-          <div className="w-5 h-1 bg-gray-300 rounded-full mx-auto mt-1"></div>
-          <div className="w-6 h-1 bg-gray-300 rounded-full mx-auto mt-1"></div>
-          <div className="w-4 h-1 bg-gray-300 rounded-full mx-auto mt-1"></div>
-        </div>
-      </div>
-      
-      {/* Status Message */}
-      <div className="mt-4 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
-        <p className={`text-sm font-medium transition-colors duration-300 ${
-          isProcessing ? 'text-yellow-600' : hasFile ? 'text-green-600' : 'text-[#007ACC]'
-        }`}>
-          {isProcessing ? 'Processing your file...' : hasFile ? 'Ready to process!' : 'Upload a file to begin'}
-        </p>
       </div>
     </div>
   );
 }
+
+export default RobotAssistant;

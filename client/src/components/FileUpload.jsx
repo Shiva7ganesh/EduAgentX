@@ -1,82 +1,70 @@
-import React, { useCallback } from 'react';
-import { Upload } from 'lucide-react';
+import React, { useRef } from 'react';
+import { Upload, FileText, CheckCircle } from 'lucide-react';
 
 
-export default function FileUpload({ onFileSelect, hasFile, fileName }) {
-  const handleDrop = useCallback((e) => {
-    e.preventDefault();
-    const files = e.dataTransfer.files;
-    if (files.length > 0 && files[0].name.endsWith('.xlsx')) {
-      onFileSelect(files[0]);
+function FileUpload({ onFileSelect, hasFile, fileName }) {
+  const fileInputRef = useRef(null);
+
+  const handleClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      onFileSelect(file);
     }
-  }, [onFileSelect]);
-
-  const handleFileInput = useCallback((e) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      onFileSelect(files[0]);
-    }
-  }, [onFileSelect]);
+  };
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full">
+      <label className="block text-sm font-semibold text-gray-700 mb-3">
+        Document Upload
+      </label>
+      
       <div
-        className="relative group"
-        onDrop={handleDrop}
-        onDragOver={(e) => e.preventDefault()}
+        onClick={handleClick}
+        className="relative w-full p-8 border-2 border-dashed border-white/40 rounded-2xl bg-white/20 backdrop-blur-sm cursor-pointer transition-all duration-300 hover:border-[#007ACC]/50 hover:bg-white/30 group"
       >
-        <div className={`
-          relative p-8 border-2 border-dashed rounded-2xl transition-all duration-300
-          ${hasFile 
-            ? 'border-green-400 bg-green-50/50' 
-            : 'border-[#007ACC]/50 bg-white/10 hover:bg-white/20 hover:border-[#007ACC]'
-          }
-          backdrop-blur-sm shadow-xl group-hover:shadow-2xl
-        `}>
-          <input
-            type="file"
-            accept=".xlsx,.xls"
-            onChange={handleFileInput}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-          />
-          
-          <div className="text-center">
-            <div className={`
-              mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-all duration-300
-              ${hasFile 
-                ? 'bg-green-100 text-green-600' 
-                : 'bg-[#007ACC]/10 text-[#007ACC] group-hover:bg-[#007ACC]/20'
-              }
-            `}>
-              <Upload className="w-8 h-8" />
-            </div>
-            
-            {hasFile ? (
+        <input
+          ref={fileInputRef}
+          type="file"
+          onChange={handleFileChange}
+          className="hidden"
+          accept=".pdf,.doc,.docx,.txt"
+        />
+        
+        <div className="text-center">
+          {hasFile ? (
+            <div className="space-y-4">
+              <CheckCircle className="w-12 h-12 text-green-500 mx-auto" />
               <div>
-                <h3 className="text-lg font-semibold text-green-600 mb-2">File Ready!</h3>
-                <p className="text-sm text-gray-600 truncate max-w-xs mx-auto">
+                <p className="text-lg font-semibold text-gray-800">File Uploaded</p>
+                <p className="text-sm text-gray-600 flex items-center justify-center mt-2">
+                  <FileText className="w-4 h-4 mr-2" />
                   {fileName}
                 </p>
               </div>
-            ) : (
+              <p className="text-xs text-gray-500">Click to upload a different file</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <Upload className="w-12 h-12 text-[#007ACC] mx-auto group-hover:scale-110 transition-transform duration-300" />
               <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  Upload Excel File
-                </h3>
-                <p className="text-sm text-gray-600 mb-2">
-                  Drop your .xlsx file here or click to browse
-                </p>
-                <p className="text-xs text-gray-500">
-                  Supported formats: .xlsx, .xls
+                <p className="text-lg font-semibold text-gray-800">Upload Document</p>
+                <p className="text-sm text-gray-600">
+                  Click to select or drag and drop your file here
                 </p>
               </div>
-            )}
-          </div>
-          
-          {/* Glassmorphism border effect */}
-          <div className="absolute inset-0 rounded-2xl border border-white/20 pointer-events-none"></div>
+              <p className="text-xs text-gray-500">
+                Supported formats: PDF, DOC, DOCX, TXT
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
+
+export default FileUpload;

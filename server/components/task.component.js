@@ -6,8 +6,8 @@ config();
 const processStatusStore = new Map();
 
 export const initiateTask = async (req, res) => {
-  const { downloadlink } = req.body || {};
-  if (!downloadlink) {
+  const { collegeLogoDownloadLink, collegeName,studentExcelDownloadLink } = req.body || {};
+  if (!collegeLogoDownloadLink || !collegeName || !studentExcelDownloadLink) {
     return res
       .status(400)
       .json({ status: "error", error: "Download link is required" });
@@ -19,7 +19,7 @@ export const initiateTask = async (req, res) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      downloadlink,
+      collegeLogoDownloadLink, collegeName, studentExcelDownloadLink 
     }),
   });
   const result = await response.json();
