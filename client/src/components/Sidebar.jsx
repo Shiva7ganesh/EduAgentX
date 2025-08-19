@@ -74,10 +74,9 @@ export const Sidebar = () => {
                 </ul>
             </nav>
 
-            {/* Footer Section */}
             <div className='px-6 py-4 border-t border-slate-700/50'>
                 <div className='text-xs text-slate-500 text-center'>
-                    © 2024 EduAgentX
+                    © 2025 EduAgentX
                 </div>
             </div>
         </div>
