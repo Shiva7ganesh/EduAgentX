@@ -139,7 +139,7 @@ function Homepage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-100 relative overflow-hidden">
+    <div className="flex-grow shrink-0  overflow-y-auto h-screen bg-gradient-to-br w-full from-gray-50 via-blue-50 to-indigo-100 relative overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Circuit patterns */}
@@ -188,7 +188,7 @@ function Homepage() {
           </p>
         </header>
 
-        <div className="grid lg:grid-cols-3 gap-8 items-start max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-3 gap-8 items-start max-w-6xl mx-auto">
           {/* Robot Assistant */}
           <div className="lg:col-span-1 flex justify-center">
             <RobotAssistant 
