@@ -20,7 +20,7 @@ export async function getObjectURL(key){
         Key: 'uploads/' + key,
     });
 
-    const signedUrl = await getSignedUrl(s3Client, command);
+    const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 60 * 60 * 24 * 7 });
 
     return signedUrl;
 
