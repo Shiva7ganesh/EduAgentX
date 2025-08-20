@@ -4,7 +4,7 @@ import path from 'path';
 import "dotenv/config";
 import { getDashboardData, getExcelURL, getProcessStatus, getProcessStatusById, getSignedURL, initiateTask } from "./components/task.component.js";
 import { githubWebHook } from "./components/github.component.js";
-import { getStudentDetails, sendStudentDetails } from "./components/student.component.js";
+import { getStudentAttendanceResults, getStudentDetails, sendStudentDetails } from "./components/student.component.js";
 import { whatsApi } from "./components/apis.component.js";
 const app = express();
 app.use(
@@ -40,6 +40,8 @@ app.get('/api/student-details', getStudentDetails);
 app.post('/api/submit-attendance', sendStudentDetails);
 
 app.post('/api/whatsapp', whatsApi);
+
+app.get('/api/student-attendance', getStudentAttendanceResults);
 
 app.get('/api/testing', (req, res) => {
   res.json({ message: "Testing endpoint is working!" });

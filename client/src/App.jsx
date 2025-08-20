@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard'
 import AbsentPage from './pages/AbsentPage';
 import { Sidebar } from './components/Sidebar';
 import {Toaster} from 'react-hot-toast'
+import StudentAttendance from './pages/StudentAttendance';
 const App = () => {
   return (
     <>
@@ -18,6 +19,7 @@ const App = () => {
             <Route path='/' element={<Homepage />} />
             <Route path='/dashboard' element={<Dashboard />} />
             <Route path='/mark-absentees' element={<AbsentPage />} />
+            <Route path='/attendance' element={<StudentAttendance />} />
             <Route path='*' element={<h1>Not Found Ra babu</h1>} />
           </Routes>
         </div>

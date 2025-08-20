@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, LayoutDashboard, BookMarked } from 'lucide-react';
+import { Home, LayoutDashboard, BookMarked, ViewIcon } from 'lucide-react';
 
 export const Sidebar = () => {
     const sideBarData = [
@@ -18,6 +18,11 @@ export const Sidebar = () => {
             name: 'Dashboard',
             link: '/dashboard',
             icon: LayoutDashboard
+        },
+        {
+            name: 'Students',
+            link: '/attendance',
+            icon: ViewIcon
         }
     ]
 

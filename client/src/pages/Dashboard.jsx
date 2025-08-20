@@ -12,6 +12,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import Loading from "../components/Loading";
 
 export default function EmailDashboard() {
   const [dashboardData, setDashboardData] = useState({
@@ -25,7 +26,7 @@ export default function EmailDashboard() {
     datedash: "2025-08-15",
     Id: "DFAAF77B-BB79-F011-B481-0022489D4A06",
   });
-
+  const [isLoading, setLoading] = useState(true);
   const others =
     dashboardData.totalemails -
     dashboardData.leavemails -
@@ -64,6 +65,8 @@ export default function EmailDashboard() {
       setDashboardData(result?.data?.value[0])
     } catch (error) {
       console.log(error)
+    }finally{
+      setLoading(false)
     }
 
   }
@@ -76,7 +79,11 @@ export default function EmailDashboard() {
     }
    
   }, [])
-
+  if(isLoading){
+    return <div className="w-full h-full">
+      <Loading />
+    </div>
+  }
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 to-slate-100 p-4 md:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto space-y-8">

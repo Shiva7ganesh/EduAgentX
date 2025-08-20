@@ -111,3 +111,86 @@ export const sendStudentDetails = async (req, res) => {
 
 
 }
+
+
+export const getStudentAttendanceResults = async (req, res) => {
+  const date = req.query.date;
+  if(!date) return res.json({status: 'error', message: 'Date is not provided'}).status(404);
+  try {
+    const response = await fetch('https://cloud.uipath.com/eduautomaters/defaulttenant/dataservice_/api/EntityService/AttendenceTable/query', {
+      method: 'POST',
+      headers: {
+        'Content-Type' : 'application/json',
+        'Authorization' : `Bearer ${process.env.UI_PATH_DASH_TOKEN}`
+      },
+      body: JSON.stringify({
+        "selectedFields": [
+          "stdid",
+          "studentemail",
+          "attdate",
+          "isPresent"
+        ],
+        "filterGroup": {
+          "logicalOperator": 0,
+          "queryFilters": [
+            {
+              "fieldName": "attdate",
+              "operator": "=",
+              "value": date
+            }
+          ],
+          "filterGroups": []
+        },
+        "start": 0,
+        "limit": 100
+      })
+    });
+
+    const result = await response.json();
+    if(result.totalRecordCount !== 0){
+        const studentData = result?.value?.map(student => ({
+          student_id: student.stdid,
+          student_name: student.Studentname,
+          isPresent: student.isPresent
+        }));
+        return res.json({
+          status: 'success',
+          message: 'student details fetched successfully',
+          data: studentData
+        })
+    }
+  } catch (error) {
+    return res.json({
+      status: 'error',
+      message: error?.message
+    }).start(500)
+  }
+
+  try {
+    const response = await fetch(
+      "https://cloud.uipath.com/eduautomaters/defaulttenant/dataservice_/api/EntityService/Studenttable/read",
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${process.env.UI_PATH_DASH_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+      }
+
+    );
+    const result = await response.json();
+    const studentData = result.value.map(student => ({
+        student_name : student.Studentname,
+        student_id : student.Studentid
+    }))
+    return res.json(
+      { status: "success", message: 'student detials fetched successfully', data: studentData }
+    );
+  } catch (error) {
+    console.error("Error fetching dashboard data:", error);
+    return res
+      .status(500)
+      .json({ status: "error", message: "Failed to fetch dashboard data" });
+  }
+
+}
