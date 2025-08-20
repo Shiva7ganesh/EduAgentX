@@ -32,7 +32,55 @@ export const getStudentDetails = async (req, res) => {
 export const sendStudentDetails = async (req, res) => {
 
   const details = req.body;
-  console.log("Received attendance data:", details.attendanceData);
+
+
+  // checking if the student is already present in the database at the same date
+  const selectedDate = [ ...new Set(details.attendanceData.map(student => student.attdate))][0];
+
+  try {
+    const response = await fetch('https://cloud.uipath.com/eduautomaters/defaulttenant/dataservice_/api/EntityService/AttendenceTable/query', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.UI_PATH_DASH_TOKEN}`,
+      },
+      body: JSON.stringify({
+        "selectedFields": [
+          "stdid",
+          "studentemail"
+        ],
+        "filterGroup": {
+          "logicalOperator": 0,
+          "queryFilters": [
+            {
+              "fieldName": "attdate",
+              "operator": "=",
+              "value": selectedDate
+            }
+          ],
+          "filterGroups": []
+        },
+        "start": 0,
+        "limit": 100
+      }
+      )
+    })
+    const result = await response.json();
+    if(result?.totalRecordCount && result?.totalRecordCount > 0){
+      return res.json({
+        status: "error",
+        message: "Attendance already marked for this date",
+        data: result
+      })
+    }
+  } catch (error) {
+    console.error("Error fetching attendance data:", error);
+    return res.status(500).json({
+      status: "error",
+      error: "Failed to fetch attendance data",
+    });
+  }
+  console.log("Attendance data received successfully");
   try {
     const response = await fetch("https://cloud.uipath.com/eduautomaters/defaulttenant/dataservice_/api/EntityService/AttendenceTable/insert-batch", {
       method: "POST",

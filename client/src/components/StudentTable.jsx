@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRef } from "react";
+import {toast} from 'react-hot-toast';
 
 const StudentTable = () => {
   const [studentDetails, setStudentDetails] = useState([]);
@@ -68,8 +69,10 @@ const StudentTable = () => {
 
       if (response.ok) {
         const result = await response.json();
-        if(result.status === 'success'){
-          alert('Student Attendance Marked')
+        if(result.status == 'success'){
+          toast.success(result.message)
+        }else{
+          toast.error(result.message)
         }
       } else {
         console.error("Failed to submit attendance");

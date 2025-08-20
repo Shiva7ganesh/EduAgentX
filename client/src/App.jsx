@@ -4,9 +4,11 @@ import Homepage from './pages/SendEmails';
 import Dashboard from './pages/Dashboard'
 import AbsentPage from './pages/AbsentPage';
 import { Sidebar } from './components/Sidebar';
+import {Toaster} from 'react-hot-toast'
 const App = () => {
   return (
     <>
+    <Toaster />
       <main className='flex h-screen'>
         <div className='w-[15vw] flex-shrink'>
           <Sidebar />
