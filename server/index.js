@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import path from 'path';
 import "dotenv/config";
-import { getDashboardData, getExcelURL, getProcessStatus, getProcessStatusById, getSignedURL, initiateTask } from "./components/task.component.js";
+import { getDashboardData, getExcelURL, getProcessStatus, getProcessStatusById, getSignedURL, initiateAbsenteesTask, initiateTask } from "./components/task.component.js";
 import { githubWebHook } from "./components/github.component.js";
 import { getStudentAttendanceResults, getStudentDetails, sendStudentDetails } from "./components/student.component.js";
 import { whatsApi } from "./components/apis.component.js";
@@ -42,6 +42,8 @@ app.post('/api/submit-attendance', sendStudentDetails);
 app.post('/api/whatsapp', whatsApi);
 
 app.get('/api/student-attendance', getStudentAttendanceResults);
+
+app.post('/api/initiate-absentees-process', initiateAbsenteesTask);
 
 app.get('/api/testing', (req, res) => {
   res.json({ message: "Testing endpoint is working!" });

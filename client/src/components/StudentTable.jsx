@@ -71,6 +71,23 @@ const StudentTable = () => {
         const result = await response.json();
         if(result.status == 'success'){
           toast.success(result.message)
+
+          // call the process 
+
+          try {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/initiate-absentees-process`, {
+              method: 'POST',
+              headers: {
+                'Content-Type' : 'application/json'
+              }
+            })
+            const result = await response.json();
+            console.log(result)
+          } catch (error) {
+            toast.error(error.message)
+          }
+
+
         }else{
           toast.error(result.message)
         }

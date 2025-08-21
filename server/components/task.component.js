@@ -154,3 +154,27 @@ export const getDashboardData = async (req, res) => {
       .json({ status: "error", error: "Failed to fetch dashboard data" });
   }
 };
+
+
+export const initiateAbsenteesTask = async (req, res) => {
+  try {
+      const response = await fetch('https://cloud.uipath.com/eduautomaters/DefaultTenant/orchestrator_/t/f2524818-9214-4eb5-bfa0-b272093a7545/absent', {
+        method: 'POST',
+        headers: {
+          'Authorization' : `Bearer ${process.env.UI_AUTH_TOKEN}`
+        }
+      });
+      const result = await response.json();
+
+      return res.json({
+        status: 'success',
+        message: 'Task Initiated successfully',
+        data : result
+      })
+  } catch (error) {
+    return res.json({
+      status: 'error',
+      message: error.message
+    })
+  }
+}
